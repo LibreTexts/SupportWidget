@@ -1,7 +1,9 @@
 import "./index.css";
 
-createLaunchpadWidget();
-function createLaunchpadWidget() {
+let isModalOpen = false;
+createSupportWidget();
+
+function createSupportWidget() {
     const element = document.getElementById('support-widget-container');
 
     if(!element) {
@@ -80,8 +82,16 @@ function createSupportModal(){
     closeBtn.addEventListener('click', () => closeSupportModal());
     modalContent.appendChild(closeBtn);
 
+    // Append all content to modal and then append modal to body
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
+
+    // Close modal on escape key press (if modal is open)
+    document.body.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && isModalOpen) {
+            closeSupportModal();
+        }
+    })
 }
 
 function openSupportModal() {
@@ -92,6 +102,8 @@ function openSupportModal() {
     }
     modal.style.display = 'block';
     modal.style.visibility = 'visible';
+    modal.focus();
+    isModalOpen = true;
 }
 
 function closeSupportModal() {
@@ -102,6 +114,7 @@ function closeSupportModal() {
     }
     modal.style.display = 'none';
     modal.style.visibility = 'hidden';
+    isModalOpen = false;
 }
 
 function contactSupport() {

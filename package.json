@@ -11,14 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LibreTexts/LibreOne-Launchpad.git"
+    "url": "git+https://github.com/LibreTexts/SupportWidget.git"
   },
   "author": "LibreTexts",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LibreTexts/LibreOne-Launchpad/issues"
-  },
-  "homepage": "https://github.com/LibreTexts/LibreOne-Launchpad#readme",
+  "homepage": "https://github.com/LibreTexts/SupportWidget#readme",
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
