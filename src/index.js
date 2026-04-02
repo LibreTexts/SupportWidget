@@ -22,9 +22,11 @@ function createSupportWidget() {
 
     // Create widget
     supportButton.id = 'supportButton';
-    supportButton.role = 'link';
     supportButton.className = 'support-widget-button';
     supportButton.innerHTML = '?';
+    supportButton.setAttribute('aria-label', 'Open support menu');
+    supportButton.setAttribute('aria-expanded', 'false');
+    supportButton.setAttribute('aria-controls', 'supportModal');
     // supportButton.appendChild(supportButtonImg)
     supportButton.addEventListener('click', () => openSupportModal());
 
@@ -38,6 +40,10 @@ function createSupportModal(){
     const modal = document.createElement('div');
     modal.id = 'supportModal';
     modal.className = 'support-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'supportModalTitle');
+    modal.setAttribute('tabindex', '-1');
     const modalContent = document.createElement('div');
     modalContent.className = 'support-modal-content';
 
@@ -48,6 +54,7 @@ function createSupportModal(){
     modalContent.appendChild(headerLogo);
 
     const modalHeader = document.createElement('h2');
+    modalHeader.id = 'supportModalTitle';
     modalHeader.className = 'support-modal-header';
     modalHeader.innerHTML = 'Support Center';
     modalContent.appendChild(modalHeader);
@@ -59,37 +66,58 @@ function createSupportModal(){
 
     const getSupportButton = document.createElement('button');
     getSupportButton.className = 'support-modal-button';
-    getSupportButton.innerHTML = 'Contact Support';
+    getSupportButton.innerHTML = 'Contact Support<span class="support-widget-sr-only"> (opens in new tab)</span>';
     getSupportButton.addEventListener('click', () => contactSupport());
 
     const readTheDocsButton = document.createElement('button');
     readTheDocsButton.className = 'support-modal-button';
-    readTheDocsButton.innerHTML = 'Search the Insight Knowledge Base';
+    readTheDocsButton.innerHTML = 'Search the Insight Knowledge Base<span class="support-widget-sr-only"> (opens in new tab)</span>';
     readTheDocsButton.addEventListener('click', () => openInsightKB());
 
     const systemsStatusButton = document.createElement('button');
     systemsStatusButton.className = 'support-modal-button';
-    systemsStatusButton.innerHTML = 'Check System Status';
+    systemsStatusButton.innerHTML = 'Check System Status<span class="support-widget-sr-only"> (opens in new tab)</span>';
     systemsStatusButton.addEventListener('click', () => checkSystemStatus());
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'support-modal-close-button';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Close dialog');
+    closeBtn.addEventListener('click', () => closeSupportModal());
+    modalContent.insertBefore(closeBtn, headerLogo);
 
     modalContent.appendChild(getSupportButton);
     modalContent.appendChild(readTheDocsButton);
     modalContent.appendChild(systemsStatusButton);
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'support-modal-close-button';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.addEventListener('click', () => closeSupportModal());
-    modalContent.appendChild(closeBtn);
-
     // Append all content to modal and then append modal to body
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
-    // Close modal on escape key press (if modal is open)
+    // Close modal on escape key press; trap focus within modal on Tab
     document.body.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape' && isModalOpen) {
+        if (e.key === 'Escape' && isModalOpen) {
             closeSupportModal();
+            return;
+        }
+        if (e.key === 'Tab' && isModalOpen) {
+            const focusable = Array.from(
+                modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+            );
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         }
     })
 }
@@ -100,10 +128,16 @@ function openSupportModal() {
         console.error('LibreTexts Support Widget: Modal not found. Please add a div with id="supportModal" to your page.');
         return;
     }
+    document.querySelectorAll('body > *:not(#supportModal)').forEach(el => {
+        el.setAttribute('aria-hidden', 'true');
+    });
     modal.style.display = 'block';
     modal.style.visibility = 'visible';
-    modal.focus();
+    const firstFocusable = modal.querySelector('button');
+    if (firstFocusable) firstFocusable.focus();
+    else modal.focus();
     isModalOpen = true;
+    document.getElementById('supportButton').setAttribute('aria-expanded', 'true');
 }
 
 function closeSupportModal() {
@@ -112,9 +146,14 @@ function closeSupportModal() {
         console.error('LibreTexts Support Widget: Modal not found. Please add a div with id="supportModal" to your page.');
         return;
     }
+    document.querySelectorAll('body > *:not(#supportModal)').forEach(el => {
+        el.removeAttribute('aria-hidden');
+    });
     modal.style.display = 'none';
     modal.style.visibility = 'hidden';
     isModalOpen = false;
+    document.getElementById('supportButton').setAttribute('aria-expanded', 'false');
+    document.getElementById('supportButton').focus();
 }
 
 function contactSupport() {
