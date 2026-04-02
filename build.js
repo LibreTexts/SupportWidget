@@ -9,6 +9,7 @@ const cssInjectPlugin = {
   name: 'css-inject',
   setup(build) {
     build.onLoad({ filter: /\.css$/ }, (args) => {
+      // args.path is resolved by esbuild from source imports — not user input. nosec
       const css = fs.readFileSync(args.path, 'utf8');
       return {
         contents: `
