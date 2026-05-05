@@ -82,7 +82,7 @@ function createSupportModal(){
     const closeBtn = document.createElement('button');
     closeBtn.className = 'support-modal-close-button';
     closeBtn.innerHTML = '&times;';
-    closeBtn.setAttribute('aria-label', 'Close dialog');
+    closeBtn.setAttribute('aria-label', 'Close Support Center dialog');
     closeBtn.addEventListener('click', () => closeSupportModal());
     modalContent.insertBefore(closeBtn, headerLogo);
 
