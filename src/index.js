@@ -131,6 +131,7 @@ function openSupportModal() {
     document.querySelectorAll('body > *:not(#supportModal)').forEach(el => {
         el.setAttribute('aria-hidden', 'true');
     });
+    document.body.style.overflow = 'hidden';
     modal.style.display = 'block';
     modal.style.visibility = 'visible';
     const firstFocusable = modal.querySelector('button');
@@ -149,6 +150,7 @@ function closeSupportModal() {
     document.querySelectorAll('body > *:not(#supportModal)').forEach(el => {
         el.removeAttribute('aria-hidden');
     });
+    document.body.style.overflow = '';
     modal.style.display = 'none';
     modal.style.visibility = 'hidden';
     isModalOpen = false;
