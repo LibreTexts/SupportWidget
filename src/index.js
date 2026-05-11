@@ -59,8 +59,9 @@ function createSupportModal(){
     modalHeader.innerHTML = 'Support Center';
     modalContent.appendChild(modalHeader);
 
-    const modalSubHeader = document.createElement('h3');
-    modalSubHeader.innerHTML = 'How can we help you today?';
+    const modalSubHeader = document.createElement('p');
+    modalSubHeader.className = 'support-modal-subheader';
+    modalSubHeader.textContent = 'How can we help you today?';
     modalContent.appendChild(modalSubHeader);
 
 
@@ -81,14 +82,19 @@ function createSupportModal(){
 
     const closeBtn = document.createElement('button');
     closeBtn.className = 'support-modal-close-button';
-    closeBtn.innerHTML = '&times;';
+    closeBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
     closeBtn.setAttribute('aria-label', 'Close Support Center dialog');
     closeBtn.addEventListener('click', () => closeSupportModal());
     modalContent.insertBefore(closeBtn, headerLogo);
 
-    modalContent.appendChild(getSupportButton);
-    modalContent.appendChild(readTheDocsButton);
-    modalContent.appendChild(systemsStatusButton);
+    const actionList = document.createElement('ul');
+    actionList.className = 'support-modal-action-list';
+    [getSupportButton, readTheDocsButton, systemsStatusButton].forEach(btn => {
+        const li = document.createElement('li');
+        li.appendChild(btn);
+        actionList.appendChild(li);
+    });
+    modalContent.appendChild(actionList);
 
     // Append all content to modal and then append modal to body
     modal.appendChild(modalContent);
